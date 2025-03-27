@@ -23,8 +23,25 @@ def obtener_vulnerabilidades_fixeadas():
 def obtener_vulnerabilidades_no_fixeadas():
     print("Prueba punto 3.")
 
-def obtener_informacion_severidad():
-    print("Prueba punto 3.")
+def obtener_informacion_severidad(): #MALO
+    try:
+        severidades = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0}
+        for vulner in datos.get("result", {}).get("CVE_Items", []):
+            for metric in vulner.get("cve", {}).get("metrics", {}).get("cvssMetricV2", []):
+                severidad = metric.get("baseSeverity")
+                if severidad in severidades:
+                    severidades[severidad] += 1
+
+        print("Recuento de severidades:")
+        for categoria, cantidad in severidades.items():
+            print(f"{categoria}: {cantidad}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error al conectar con la API: {e}")
+    except json.JSONDecodeError as e:
+        print(f"Error al decodificar la respuesta JSON: {e}")
+
+obtener_informacion_severidad()
     
 def mostrar_menu():
     """Muestra el menú de opciones."""
